@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { productService } from "@/services/product.service";
 import type { ProductFilters } from "@/types/product";
+import type { ProductWithDetails } from "@/services/product.service";
 
 export const productKeys = {
   all: ["products"] as const,
@@ -18,6 +19,7 @@ export function useProducts(filters: ProductFilters = {}) {
   return useQuery({
     queryKey: productKeys.list(filters),
     queryFn: () => productService.getProducts(filters),
+    staleTime: 3 * 60_000,
   });
 }
 
@@ -25,6 +27,7 @@ export function useFeaturedProducts() {
   return useQuery({
     queryKey: productKeys.featured(),
     queryFn: productService.getFeaturedProducts,
+    staleTime: 5 * 60_000,
   });
 }
 
@@ -32,14 +35,30 @@ export function useNewArrivals() {
   return useQuery({
     queryKey: productKeys.newArrivals(),
     queryFn: productService.getNewArrivals,
+    staleTime: 5 * 60_000,
   });
 }
 
 export function useProduct(slug: string) {
+  const qc = useQueryClient();
   return useQuery({
     queryKey: productKeys.detail(slug),
     queryFn: () => productService.getProductBySlug(slug),
     enabled: !!slug,
+    staleTime: 5 * 60_000,
+    // Instantly seed from any list cache — no skeleton flash if already seen
+    initialData: () => {
+      const sources = [
+        qc.getQueryData<ProductWithDetails[]>(productKeys.featured()),
+        qc.getQueryData<ProductWithDetails[]>(productKeys.newArrivals()),
+        qc.getQueryData<ProductWithDetails[]>(productKeys.admin()),
+        (qc.getQueryData<{ products: ProductWithDetails[] }>(productKeys.list({})))?.products,
+      ];
+      for (const list of sources) {
+        const hit = list?.find((p) => p.slug === slug);
+        if (hit) return hit;
+      }
+    },
   });
 }
 

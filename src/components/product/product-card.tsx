@@ -9,8 +9,11 @@ import { useAuthStore } from "@/store/auth.store";
 import { useWishlistStore } from "@/store/wishlist.store";
 import { useToggleWishlist } from "@/hooks/use-wishlist";
 import { useAddToCart } from "@/hooks/use-cart";
+import { productService } from "@/services/product.service";
+import { productKeys } from "@/hooks/use-products";
 import type { ProductWithImages } from "@/types/product";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ProductCardProps {
   product: ProductWithImages;
@@ -19,6 +22,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product, className }: ProductCardProps) {
   const router = useRouter();
+  const qc = useQueryClient();
   const { user } = useAuthStore();
   const { isWishlisted } = useWishlistStore();
   const { mutate: toggleWishlist, isPending: isTogglingWishlist } = useToggleWishlist();
@@ -41,6 +45,14 @@ export function ProductCard({ product, className }: ProductCardProps) {
     toggleWishlist(product.id);
   };
 
+  const handleMouseEnter = () => {
+    qc.prefetchQuery({
+      queryKey: productKeys.detail(product.slug),
+      queryFn: () => productService.getProductBySlug(product.slug),
+      staleTime: 5 * 60_000,
+    });
+  };
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -49,7 +61,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
   };
 
   return (
-    <Link href={`/products/${product.slug}`} className={cn("group block", className)}>
+    <Link href={`/products/${product.slug}`} className={cn("group block", className)} onMouseEnter={handleMouseEnter}>
       {/* Image container — portrait ratio like Myntra */}
       <div className="relative overflow-hidden rounded-xl bg-secondary aspect-[3/4] mb-3">
 

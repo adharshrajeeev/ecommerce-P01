@@ -39,7 +39,7 @@ export default function AdminOrdersPage() {
                   <th className="text-left p-3 font-medium hidden sm:table-cell">Date</th>
                   <th className="text-left p-3 font-medium">Amount</th>
                   <th className="text-left p-3 font-medium">Status</th>
-                  <th className="text-right p-3 font-medium">Actions</th>
+                  <th className="text-right p-3 font-medium"></th>
                 </tr>
               </thead>
               <tbody>

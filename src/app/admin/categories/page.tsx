@@ -113,7 +113,7 @@ export default function AdminCategoriesPage() {
                 <th className="text-left p-3 font-medium hidden sm:table-cell">Slug</th>
                 <th className="text-left p-3 font-medium hidden sm:table-cell">Order</th>
                 <th className="text-left p-3 font-medium">Status</th>
-                <th className="text-right p-3 font-medium">Actions</th>
+                <th className="text-right p-3 font-medium"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">

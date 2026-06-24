@@ -31,7 +31,19 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <AuthInitializer />
       {children}
       <CartSheet />
-      <Toaster richColors position="top-right" />
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            background: "rgba(20, 20, 20, 0.82)",
+            backdropFilter: "blur(12px)",
+            color: "#fff",
+            border: "1px solid rgba(255,255,255,0.1)",
+            borderRadius: "12px",
+            fontSize: "14px",
+          },
+        }}
+      />
     </QueryClientProvider>
   );
 }

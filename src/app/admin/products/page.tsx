@@ -461,7 +461,7 @@ export default function AdminProductsPage() {
                   <th className="text-left p-3 font-medium">Price</th>
                   <th className="text-left p-3 font-medium hidden sm:table-cell">Stock</th>
                   <th className="text-left p-3 font-medium hidden sm:table-cell">Status</th>
-                  <th className="text-right p-3 font-medium">Actions</th>
+                  <th className="text-right p-3 font-medium"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">

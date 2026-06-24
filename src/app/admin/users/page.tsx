@@ -47,7 +47,7 @@ export default function AdminUsersPage() {
                 <th className="text-left p-3 font-medium hidden sm:table-cell">Role</th>
                 <th className="text-left p-3 font-medium hidden md:table-cell">Joined</th>
                 <th className="text-left p-3 font-medium">Status</th>
-                <th className="text-right p-3 font-medium">Actions</th>
+                <th className="text-right p-3 font-medium"></th>
               </tr>
             </thead>
             <tbody>
