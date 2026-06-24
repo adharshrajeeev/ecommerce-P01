@@ -37,6 +37,7 @@ export function useAdminOrders() {
   return useQuery({
     queryKey: orderKeys.admin(),
     queryFn: orderService.getAllOrders,
+    staleTime: 2 * 60_000,   // orders update more often, 2 min
   });
 }
 
@@ -44,6 +45,7 @@ export function useAdminStats() {
   return useQuery({
     queryKey: orderKeys.stats(),
     queryFn: orderService.getAdminStats,
+    staleTime: 2 * 60_000,
   });
 }
 

@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
-import { Plus, Pencil, Trash2, Loader2, Upload, Star, X, ImageIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, Star, X, ImageIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAdminProducts, useDeleteProduct } from "@/hooks/use-products";
 import { useAdminCategories } from "@/hooks/use-categories";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { formatPrice, slugify } from "@/lib/utils";
 import type { ProductWithImages } from "@/types/product";
 import { toast } from "sonner";
@@ -405,14 +406,27 @@ function ProductDialog({
 export default function AdminProductsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<ProductWithImages | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ProductWithImages | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const { data: products = [], isLoading } = useAdminProducts();
   const { data: categories = [] } = useAdminCategories();
-  const { mutate: deleteProduct } = useDeleteProduct();
+  const { mutateAsync: deleteProduct } = useDeleteProduct();
 
   const openCreate = () => { setEditing(null); setDialogOpen(true); };
   const openEdit = (p: ProductWithImages) => { setEditing(p); setDialogOpen(true); };
   const onClose = () => { setDialogOpen(false); setEditing(null); };
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    try {
+      await deleteProduct(deleteTarget.id);
+    } finally {
+      setIsDeleting(false);
+      setDeleteTarget(null);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -503,7 +517,7 @@ export default function AdminProductsPage() {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 text-destructive hover:text-destructive"
-                            onClick={() => { if (confirm("Delete this product?")) deleteProduct(product.id); }}
+                            onClick={() => setDeleteTarget(product)}
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </Button>
@@ -526,6 +540,16 @@ export default function AdminProductsPage() {
           categories={categories}
         />
       )}
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title={`Delete "${deleteTarget?.name}"?`}
+        description="This will permanently remove the product and all its images. This action cannot be undone."
+        confirmLabel="Delete Product"
+        loading={isDeleting}
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }

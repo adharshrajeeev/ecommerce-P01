@@ -55,6 +55,7 @@ export function useAdminProducts() {
   return useQuery({
     queryKey: productKeys.admin(),
     queryFn: productService.getAdminProducts,
+    staleTime: 5 * 60_000,   // 5 min — no refetch when switching admin tabs
   });
 }
 

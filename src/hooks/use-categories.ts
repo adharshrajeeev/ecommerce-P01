@@ -18,6 +18,7 @@ export function useAdminCategories() {
   return useQuery({
     queryKey: categoryKeys.admin(),
     queryFn: categoryService.getAllCategories,
+    staleTime: 5 * 60_000,
   });
 }
 

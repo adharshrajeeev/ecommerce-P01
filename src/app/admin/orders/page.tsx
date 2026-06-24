@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink, Loader2 } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAdminOrders, useUpdateOrderStatus } from "@/hooks/use-orders";
@@ -11,14 +10,6 @@ import { formatPrice, formatDate } from "@/lib/utils";
 import type { Database } from "@/types/database";
 
 type OrderStatus = Database["public"]["Tables"]["orders"]["Row"]["status"];
-
-const statusVariant: Record<OrderStatus, "default" | "secondary" | "destructive" | "outline" | "success" | "warning"> = {
-  pending: "warning",
-  processing: "default",
-  shipped: "secondary",
-  delivered: "success",
-  cancelled: "destructive",
-};
 
 const statusOptions: OrderStatus[] = ["pending", "processing", "shipped", "delivered", "cancelled"];
 
