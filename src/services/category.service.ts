@@ -3,37 +3,38 @@ import type { Database } from "@/types/database";
 
 type CategoryInsert = Database["public"]["Tables"]["categories"]["Insert"];
 type CategoryUpdate = Database["public"]["Tables"]["categories"]["Update"];
+export type CategoryRow = Database["public"]["Tables"]["categories"]["Row"];
 
 const supabase = createClient();
 
 export const categoryService = {
-  async getCategories() {
+  async getCategories(): Promise<CategoryRow[]> {
     const { data, error } = await supabase
       .from("categories")
       .select("*")
       .eq("is_active", true)
       .order("sort_order", { ascending: true });
     if (error) throw error;
-    return data ?? [];
+    return (data ?? []) as CategoryRow[];
   },
 
-  async getAllCategories() {
+  async getAllCategories(): Promise<CategoryRow[]> {
     const { data, error } = await supabase
       .from("categories")
       .select("*")
       .order("sort_order", { ascending: true });
     if (error) throw error;
-    return data ?? [];
+    return (data ?? []) as CategoryRow[];
   },
 
-  async getCategoryBySlug(slug: string) {
+  async getCategoryBySlug(slug: string): Promise<CategoryRow> {
     const { data, error } = await supabase
       .from("categories")
       .select("*")
       .eq("slug", slug)
       .single();
     if (error) throw error;
-    return data;
+    return data as CategoryRow;
   },
 
   async createCategory(category: CategoryInsert) {

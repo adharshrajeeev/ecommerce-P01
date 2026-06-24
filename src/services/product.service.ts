@@ -5,6 +5,15 @@ import type { Database } from "@/types/database";
 type ProductInsert = Database["public"]["Tables"]["products"]["Insert"];
 type ProductUpdate = Database["public"]["Tables"]["products"]["Update"];
 
+type ProductRow = Database["public"]["Tables"]["products"]["Row"];
+type ProductImageRow = Database["public"]["Tables"]["product_images"]["Row"];
+type CategoryRow = Database["public"]["Tables"]["categories"]["Row"];
+
+export type ProductWithDetails = ProductRow & {
+  product_images: ProductImageRow[];
+  categories: CategoryRow | null;
+};
+
 const supabase = createClient();
 
 const PRODUCT_SELECT = `
@@ -51,10 +60,10 @@ export const productService = {
 
     const { data, error, count } = await query;
     if (error) throw error;
-    return { products: data ?? [], count };
+    return { products: (data ?? []) as unknown as ProductWithDetails[], count };
   },
 
-  async getFeaturedProducts() {
+  async getFeaturedProducts(): Promise<ProductWithDetails[]> {
     const { data, error } = await supabase
       .from("products")
       .select(PRODUCT_SELECT)
@@ -63,10 +72,10 @@ export const productService = {
       .order("created_at", { ascending: false })
       .limit(8);
     if (error) throw error;
-    return data ?? [];
+    return (data ?? []) as unknown as ProductWithDetails[];
   },
 
-  async getNewArrivals() {
+  async getNewArrivals(): Promise<ProductWithDetails[]> {
     const { data, error } = await supabase
       .from("products")
       .select(PRODUCT_SELECT)
@@ -75,10 +84,10 @@ export const productService = {
       .order("created_at", { ascending: false })
       .limit(8);
     if (error) throw error;
-    return data ?? [];
+    return (data ?? []) as unknown as ProductWithDetails[];
   },
 
-  async getProductBySlug(slug: string) {
+  async getProductBySlug(slug: string): Promise<ProductWithDetails> {
     const { data, error } = await supabase
       .from("products")
       .select(PRODUCT_SELECT)
@@ -86,20 +95,20 @@ export const productService = {
       .eq("is_active", true)
       .single();
     if (error) throw error;
-    return data;
+    return data as unknown as ProductWithDetails;
   },
 
-  async getProductById(id: string) {
+  async getProductById(id: string): Promise<ProductWithDetails> {
     const { data, error } = await supabase
       .from("products")
       .select(PRODUCT_SELECT)
       .eq("id", id)
       .single();
     if (error) throw error;
-    return data;
+    return data as unknown as ProductWithDetails;
   },
 
-  async getRelatedProducts(categoryId: string, excludeId: string) {
+  async getRelatedProducts(categoryId: string, excludeId: string): Promise<ProductWithDetails[]> {
     const { data, error } = await supabase
       .from("products")
       .select(PRODUCT_SELECT)
@@ -108,7 +117,7 @@ export const productService = {
       .neq("id", excludeId)
       .limit(4);
     if (error) throw error;
-    return data ?? [];
+    return (data ?? []) as unknown as ProductWithDetails[];
   },
 
   async createProduct(product: ProductInsert) {
@@ -168,12 +177,12 @@ export const productService = {
     if (error) throw error;
   },
 
-  async getAdminProducts() {
+  async getAdminProducts(): Promise<ProductWithDetails[]> {
     const { data, error } = await supabase
       .from("products")
       .select(PRODUCT_SELECT)
       .order("created_at", { ascending: false });
     if (error) throw error;
-    return data ?? [];
+    return (data ?? []) as unknown as ProductWithDetails[];
   },
 };

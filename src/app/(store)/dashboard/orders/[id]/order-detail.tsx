@@ -85,14 +85,15 @@ export function OrderDetail() {
             <CardHeader><CardTitle>Order Items</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               {order.order_items?.map((item) => {
-                const img = item.products.product_images?.find((i) => i.is_primary) ?? item.products.product_images?.[0];
+                const product = item.products;
+                const img = product?.product_images?.find((i) => i.is_primary) ?? product?.product_images?.[0];
                 return (
                   <div key={item.id} className="flex gap-4">
                     <div className="relative h-16 w-16 rounded-lg overflow-hidden bg-secondary shrink-0">
-                      {img && <Image src={img.url} alt={item.products.name} fill className="object-cover" />}
+                      {img && <Image src={img.url} alt={product?.name ?? ""} fill className="object-cover" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm">{item.products.name}</p>
+                      <p className="font-medium text-sm">{product?.name}</p>
                       <p className="text-sm text-muted-foreground">
                         Qty: {item.quantity} × {formatPrice(item.unit_price)}
                       </p>

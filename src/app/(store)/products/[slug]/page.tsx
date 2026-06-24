@@ -18,7 +18,6 @@ import { formatPrice, getDiscountPercent } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();

@@ -1,4 +1,17 @@
 import { createClient } from "@/lib/supabase/client";
+import type { Database } from "@/types/database";
+
+type WishlistRow = Database["public"]["Tables"]["wishlist"]["Row"];
+type ProductRow = Database["public"]["Tables"]["products"]["Row"];
+type ProductImageRow = Database["public"]["Tables"]["product_images"]["Row"];
+type CategoryRow = Database["public"]["Tables"]["categories"]["Row"];
+
+export type WishlistWithProduct = WishlistRow & {
+  products: (ProductRow & {
+    product_images: ProductImageRow[];
+    categories: CategoryRow | null;
+  }) | null;
+};
 
 const supabase = createClient();
 
@@ -12,14 +25,14 @@ const WISHLIST_SELECT = `
 `;
 
 export const wishlistService = {
-  async getWishlist(userId: string) {
+  async getWishlist(userId: string): Promise<WishlistWithProduct[]> {
     const { data, error } = await supabase
       .from("wishlist")
       .select(WISHLIST_SELECT)
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
     if (error) throw error;
-    return data ?? [];
+    return (data ?? []) as unknown as WishlistWithProduct[];
   },
 
   async addToWishlist(userId: string, productId: string) {

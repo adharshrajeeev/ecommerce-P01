@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, Package, Heart, Settings } from "lucide-react";
+import { User, Package, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [

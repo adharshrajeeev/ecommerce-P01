@@ -24,7 +24,8 @@ interface Banner {
   created_at: string;
 }
 
-const supabase = createClient();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const supabase = createClient() as any;
 
 async function fetchBanners(): Promise<Banner[]> {
   const { data, error } = await supabase

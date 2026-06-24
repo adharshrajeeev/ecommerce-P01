@@ -54,15 +54,16 @@ export default function WishlistPage() {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {items.map((item) => {
-            const primaryImage = item.products.product_images?.find((img) => img.is_primary) ?? item.products.product_images?.[0];
+            const product = item.products;
+            const primaryImage = product?.product_images?.find((img) => img.is_primary) ?? product?.product_images?.[0];
             return (
               <div key={item.id} className="group">
                 <div className="relative aspect-square rounded-xl overflow-hidden bg-muted mb-3">
-                  <Link href={`/products/${item.products.slug}`}>
+                  <Link href={`/products/${product?.slug}`}>
                     {primaryImage ? (
                       <Image
                         src={primaryImage.url}
-                        alt={item.products.name}
+                        alt={product?.name ?? ""}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
@@ -82,18 +83,18 @@ export default function WishlistPage() {
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <Link href={`/products/${item.products.slug}`} className="text-sm font-medium hover:underline line-clamp-2">
-                    {item.products.name}
+                  <Link href={`/products/${product?.slug}`} className="text-sm font-medium hover:underline line-clamp-2">
+                    {product?.name}
                   </Link>
-                  <p className="font-semibold text-sm">{formatPrice(item.products.price)}</p>
+                  <p className="font-semibold text-sm">{formatPrice(product?.price ?? 0)}</p>
                   <Button
                     size="sm"
                     className="w-full"
-                    disabled={item.products.stock_quantity === 0}
+                    disabled={(product?.stock_quantity ?? 0) === 0}
                     onClick={() => addToCart({ productId: item.product_id })}
                   >
                     <ShoppingCart className="h-4 w-4 mr-2" />
-                    {item.products.stock_quantity === 0 ? "Out of Stock" : "Add to Cart"}
+                    {(product?.stock_quantity ?? 0) === 0 ? "Out of Stock" : "Add to Cart"}
                   </Button>
                 </div>
               </div>

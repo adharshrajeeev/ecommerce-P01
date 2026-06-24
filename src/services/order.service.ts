@@ -4,6 +4,23 @@ import type { Database } from "@/types/database";
 type OrderInsert = Database["public"]["Tables"]["orders"]["Insert"];
 type AddressInsert = Database["public"]["Tables"]["addresses"]["Insert"];
 
+type OrderRow = Database["public"]["Tables"]["orders"]["Row"];
+type OrderItemRow = Database["public"]["Tables"]["order_items"]["Row"];
+type ProductRow = Database["public"]["Tables"]["products"]["Row"];
+type ProductImageRow = Database["public"]["Tables"]["product_images"]["Row"];
+type CategoryRow = Database["public"]["Tables"]["categories"]["Row"];
+type AddressRow = Database["public"]["Tables"]["addresses"]["Row"];
+
+export type OrderWithDetails = OrderRow & {
+  order_items: Array<OrderItemRow & {
+    products: (ProductRow & {
+      product_images: ProductImageRow[];
+      categories: CategoryRow | null;
+    }) | null;
+  }>;
+  addresses: AddressRow | null;
+};
+
 const supabase = createClient();
 
 const ORDER_SELECT = `
@@ -20,24 +37,24 @@ const ORDER_SELECT = `
 `;
 
 export const orderService = {
-  async getUserOrders(userId: string) {
+  async getUserOrders(userId: string): Promise<OrderWithDetails[]> {
     const { data, error } = await supabase
       .from("orders")
       .select(ORDER_SELECT)
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
     if (error) throw error;
-    return data ?? [];
+    return (data ?? []) as unknown as OrderWithDetails[];
   },
 
-  async getOrderById(orderId: string) {
+  async getOrderById(orderId: string): Promise<OrderWithDetails> {
     const { data, error } = await supabase
       .from("orders")
       .select(ORDER_SELECT)
       .eq("id", orderId)
       .single();
     if (error) throw error;
-    return data;
+    return data as unknown as OrderWithDetails;
   },
 
   async getAllOrders() {

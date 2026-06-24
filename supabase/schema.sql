@@ -257,6 +257,29 @@ CREATE POLICY "Admins can manage all order items" ON public.order_items
   );
 
 -- ==============================
+-- BANNERS TABLE
+-- ==============================
+CREATE TABLE IF NOT EXISTS public.banners (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title TEXT NOT NULL,
+  subtitle TEXT,
+  image_url TEXT NOT NULL,
+  link_url TEXT,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE public.banners ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Banners are publicly readable" ON public.banners
+  FOR SELECT USING (true);
+
+CREATE POLICY "Admins can manage banners" ON public.banners
+  FOR ALL USING (public.get_my_role() = 'admin');
+
+-- ==============================
 -- TRIGGER: Auto-create user profile on signup
 -- ==============================
 CREATE OR REPLACE FUNCTION public.handle_new_user()

@@ -155,6 +155,35 @@ export interface Database {
         Insert: Omit<Database["public"]["Tables"]["addresses"]["Row"], "id" | "created_at" | "updated_at">;
         Update: Partial<Database["public"]["Tables"]["addresses"]["Insert"]>;
       };
+      banners: {
+        Row: {
+          id: string;
+          title: string;
+          subtitle: string | null;
+          image_url: string;
+          link_url: string | null;
+          sort_order: number;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          title: string;
+          subtitle?: string | null;
+          image_url: string;
+          link_url?: string | null;
+          sort_order?: number;
+          is_active?: boolean;
+        };
+        Update: {
+          title?: string;
+          subtitle?: string | null;
+          image_url?: string;
+          link_url?: string | null;
+          sort_order?: number;
+          is_active?: boolean;
+        };
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
